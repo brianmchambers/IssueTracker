@@ -1,7 +1,39 @@
 ﻿@page "/"
+@using IssueTracker.Core.Models
+@using IssueTracker.Core.Services
+@inject ProjectService ProjectService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+<h3>Issue Tracker</h3>
 
-Welcome to your new app.
+@if (Projects.Count > 0)
+{
+    <ProjectList Projects="@Projects" OnProjectSelected="HandleProjectSelected" />
+}
+else
+{
+    <p>Loading projects...</p>
+}
+
+@if (SelectedProjectId != Guid.Empty)
+{
+    <TicketList ProjectId="@SelectedProjectId" />
+}
+
+<p>Selected project: @SelectedProjectId</p>
+
+@code {
+    private List<Project> Projects = [];
+    private Guid SelectedProjectId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Projects = await ProjectService.GetAllAsync();
+    }
+
+    private void HandleProjectSelected(Guid projectId)
+    {
+        SelectedProjectId = projectId;
+    }
+}

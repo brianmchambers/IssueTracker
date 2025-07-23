@@ -1,6 +1,7 @@
 using IssueTracker.Core.Components;
 using IssueTracker.Core.Components.Account;
 using IssueTracker.Core.Data;
+using IssueTracker.Core.Models;
 using IssueTracker.Core.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,6 +38,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<ProjectService>();
+builder.Services.AddSingleton<MockDataStore>();
 
 var app = builder.Build();
 

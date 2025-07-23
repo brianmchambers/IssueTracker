@@ -1,19 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
-    <link rel="stylesheet" href="@Assets["app.css"]" />
-    <link rel="stylesheet" href="@Assets["IssueTracker.Core.styles.css"]" />
-    <ImportMap />
-    <HeadOutlet />
-</head>
-
-<body>
-    <Routes />
-    <script src="_framework/blazor.web.js"></script>
-</body>
-
-</html>
+﻿@using IssueTracker.Core.Components.Account.Shared
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

@@ -1,5 +1,30 @@
-﻿<h3>ProjectList</h3>
+﻿<h3>Projects</h3>
 
-@code {
+@if (Projects is null) {
+    <p>Loading...</p>
+}
+else if (Projects.Count == 0)
+{
+    <p>No projects found.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var project in Projects)
+        {
+            var id = project.Id;
+            <li>
+                @project.Name (@id)
 
+                <button @onclick="@(() => Console.WriteLine("Test click"))">Test</button>
+
+                <button @onclick="@(() => {
+    Console.WriteLine($"Clicked: {project.Id}");
+    return OnProjectSelected.InvokeAsync(project.Id);
+})">
+    Select
+</button>
+            </li>
+        }
+    </ul>
 }

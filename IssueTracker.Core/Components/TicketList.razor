@@ -1,5 +1,35 @@
-﻿<h3>TicketList</h3>
-
-@code {
-
+﻿@if (Tickets.Count == 0)
+{
+    <p class="text-muted">No tickets found for this project.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Tickets)
+            {
+                <tr>
+                    <td>@ticket.Title</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.AssignedTo ?? "Unassigned"</td>
+                    <td>@ticket.CreatedAt.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary"
+                                @onclick="() => OnTicketSelected.InvokeAsync(ticket)">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
