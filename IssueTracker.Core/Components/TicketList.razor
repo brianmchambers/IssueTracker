@@ -20,7 +20,7 @@ else
                 <tr>
                     <td>@ticket.Title</td>
                     <td>@ticket.Status</td>
-                    <td>@ticket.AssignedTo ?? "Unassigned"</td>
+                    <td>@(ticket.AssignedTo ?? "Unassigned")</td>
                     <td>@ticket.CreatedAt.ToShortDateString()</td>
                     <td>
                         <button class="btn btn-sm btn-primary"

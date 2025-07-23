@@ -1,27 +1,43 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+
 @using IssueTracker.Core.Models
 @using IssueTracker.Core.Services
 @inject ProjectService ProjectService
 
-<PageTitle>Dashboard</PageTitle>
+<PageTitle>Issue Tracker</PageTitle>
 
-<h3>Issue Tracker</h3>
+<div class="container mt-4">
+    <h2 class="mb-4">Issue Tracker</h2>
 
-@if (Projects.Count > 0)
-{
-    <ProjectList Projects="@Projects" OnProjectSelected="HandleProjectSelected" />
-}
-else
-{
-    <p>Loading projects...</p>
-}
+    <div class="row">
+        <!-- Project List (left column) -->
+        <div class="col-md-4 border-end">
+            <h4>Projects</h4>
 
-@if (SelectedProjectId != Guid.Empty)
-{
-    <TicketList ProjectId="@SelectedProjectId" />
-}
+            @if (Projects.Count > 0)
+            {
+                <ProjectList Projects="@Projects" OnProjectSelected="HandleProjectSelected" />
+            }
+            else
+            {
+                <p>Loading projects...</p>
+            }
+        </div>
 
-<p>Selected project: @SelectedProjectId</p>
+        <!-- Ticket List (right column) -->
+        <div class="col-md-8">
+            @if (SelectedProjectId != Guid.Empty)
+            {
+                <TicketList ProjectId="@SelectedProjectId" />
+            }
+            else
+            {
+                <p class="text-muted">Select a project to view its tickets.</p>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
     private List<Project> Projects = [];
