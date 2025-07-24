@@ -24,7 +24,7 @@ else
                     <td>@ticket.CreatedAt.ToShortDateString()</td>
                     <td>
                         <button class="btn btn-sm btn-primary"
-                                @onclick="() => OnTicketSelected.InvokeAsync(ticket)">
+                                @onclick="() => HandleTicketSelected(ticket.Id)">
                             View
                         </button>
                     </td>
@@ -32,4 +32,9 @@ else
             }
         </tbody>
     </table>
+
+    @if (SelectedTicketId != null)
+    {
+        <TicketDetail TicketId="SelectedTicketId.Value" OnTicketUpdated="HandleTicketUpdated" />
+    }
 }

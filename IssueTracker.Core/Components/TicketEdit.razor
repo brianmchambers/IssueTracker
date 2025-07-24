@@ -1,0 +1,61 @@
+﻿@using IssueTracker.Core.Models
+@if (TicketToEdit is not null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Ticket</h5>
+                    <button type="button" class="btn-close" @onclick="Close" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input class="form-control" @bind="TicketToEdit.Title" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="3" @bind="TicketToEdit.Description"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Assigned To</label>
+                        <input class="form-control" @bind="TicketToEdit.AssignedTo" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" @bind="TicketToEdit.Status">
+                            @foreach (var status in Enum.GetValues<TicketStatus>())
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="Close">Cancel</button>
+                    <button class="btn btn-primary" @onclick="Save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Ticket? TicketToEdit { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<Ticket> OnSave { get; set; }
+
+    private Task Close() => OnClose.InvokeAsync();
+
+    private Task Save() => OnSave.InvokeAsync(TicketToEdit!);
+}

@@ -2,16 +2,16 @@
 
 public sealed record Ticket
 {
-    public required Guid Id { get; init; }
-    public required string Title { get; init; }
-    public string? Description { get; init; }
+    public required Guid Id { get; set; }
+    public required string Title { get; set; }
+    public string? Description { get; set; }
 
-    public required TicketStatus Status { get; init; } = TicketStatus.Open;
-    public required Guid ProjectId { get; init; }
+    public required TicketStatus Status { get; set; } = TicketStatus.Open;
+    public required Guid ProjectId { get; set; }
 
-    public string? AssignedTo { get; init; }
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; init; }
+    public string? AssignedTo { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 }
 
 public enum TicketStatus

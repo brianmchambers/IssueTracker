@@ -1,0 +1,51 @@
+﻿@using IssueTracker.Core.Models
+
+@if (TicketToDelete is not null && IsVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Delete Ticket</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="Cancel" />
+                </div>
+
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the following ticket?</p>
+                    <ul>
+                        <li><strong>Title:</strong> @TicketToDelete.Title</li>
+                        <li><strong>Assigned To:</strong> @TicketToDelete.AssignedTo</li>
+                        <li><strong>Status:</strong> @TicketToDelete.Status</li>
+                    </ul>
+                    <p class="text-danger">This action cannot be undone.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Ticket? TicketToDelete { get; set; }
+
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnConfirmDelete { get; set; }
+
+    private Task Cancel() => OnCancel.InvokeAsync();
+
+    private Task ConfirmDelete() =>
+        TicketToDelete is not null
+            ? OnConfirmDelete.InvokeAsync(TicketToDelete.Id)
+            : Task.CompletedTask;
+}

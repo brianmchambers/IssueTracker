@@ -1,0 +1,97 @@
+﻿@using IssueTracker.Core.Models
+@if (Ticket != null)
+{
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">@Ticket.Title</h5>
+            <span class="badge bg-secondary">@Ticket.Status</span>
+        </div>
+
+        <div class="card-body">
+            <p><strong>Assigned To:</strong> @(!string.IsNullOrWhiteSpace(Ticket.AssignedTo) ? Ticket.AssignedTo : "Unassigned")</p>
+            <p><strong>Created:</strong> @Ticket.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy hh:mm tt")</p>
+            <p><strong>Description:</strong></p>
+            <p class="text-muted">@Ticket.Description</p>
+        </div>
+
+        <div class="card-footer text-end">
+            <button class="btn btn-sm btn-outline-primary"
+                    @onclick="() => EditTicket(Ticket)">
+                Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                @onclick="() => OpenDeleteModal(Ticket)">
+                Delete
+            </button>
+        </div>
+    </div>
+
+    <TicketEdit TicketToEdit="editingTicket"
+                 OnClose="CloseModal"
+                 OnSave="SaveTicket" />
+
+    <TicketDelete TicketToDelete="selectedTicketToDelete"
+                   IsVisible="showDeleteModal"
+                   OnCancel="CloseDeleteModal"
+                   OnConfirmDelete="DeleteTicketConfirmed" />
+}
+
+@code {
+    private Ticket? editingTicket;
+
+    [Parameter]
+    public EventCallback<Ticket> OnTicketUpdated { get; set; }
+
+    private void EditTicket(Ticket ticket)
+    {
+        editingTicket = new Ticket
+        {
+            Id = ticket.Id,
+            Title = ticket.Title,
+            Description = ticket.Description,
+            Status = ticket.Status,
+            AssignedTo = ticket.AssignedTo,
+            CreatedAt = ticket.CreatedAt,
+            ProjectId = ticket.ProjectId
+        };
+    }
+
+    private void CloseModal()
+    {
+        editingTicket = null;
+    }
+
+    private Ticket? selectedTicketToDelete;
+    private bool showDeleteModal;
+
+    private void OpenDeleteModal(Ticket ticket)
+    {
+        selectedTicketToDelete = ticket;
+        showDeleteModal = true;
+    }
+
+    private void CloseDeleteModal()
+    {
+        selectedTicketToDelete = null;
+        showDeleteModal = false;
+    }
+
+    private async Task DeleteTicketConfirmed(Guid ticketId)
+    {
+        await TicketService.DeleteAsync(ticketId);
+
+        CloseDeleteModal();
+        StateHasChanged();
+    }
+
+    private async Task SaveTicket(Ticket updated)
+    {
+        await TicketService.UpdateAsync(updated);
+
+        Ticket = updated;
+
+        await OnTicketUpdated.InvokeAsync(updated);
+
+        editingTicket = null;
+    }
+}

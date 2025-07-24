@@ -17,11 +17,32 @@ public partial class TicketList : ComponentBase
 
     protected List<Ticket> Tickets { get; set; } = [];
 
+    private Guid? SelectedTicketId;
+
+    private void HandleTicketUpdated(Ticket updated)
+    {
+        var index = Tickets.FindIndex(t => t.Id == updated.Id);
+        if (index >= 0)
+        {
+            Tickets[index] = updated;
+        }
+
+        SelectedTicketId = updated.Id;
+        StateHasChanged();
+    }
+
     protected override async Task OnParametersSetAsync()
     {
+        SelectedTicketId = null;
+
         if (ProjectId != Guid.Empty)
         {
             Tickets = await TicketService.GetByProjectIdAsync(ProjectId);
         }
+    }
+
+    private void HandleTicketSelected(Guid ticketId)
+    {
+        SelectedTicketId = ticketId;
     }
 }
