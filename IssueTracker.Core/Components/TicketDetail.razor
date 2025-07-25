@@ -1,4 +1,10 @@
 ﻿@using IssueTracker.Core.Models
+@using IssueTracker.Core.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject ICurrentUserService CurrentUserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 @if (Ticket != null)
 {
     <div class="card">
@@ -15,6 +21,10 @@
         </div>
 
         <div class="card-footer text-end">
+            <button class="btn btn-sm btn-outline-secondary"
+                    @onclick="() => OpenAssignModal(Ticket)">
+                Assign To Me
+            </button>
             <button class="btn btn-sm btn-outline-primary"
                     @onclick="() => EditTicket(Ticket)">
                 Edit
@@ -25,6 +35,11 @@
             </button>
         </div>
     </div>
+
+    <TicketAssign TicketToAssign="selectedTicketToAssign"
+                  IsVisible="showAssignModal"
+                  OnCancel="CloseAssignModal"
+                  OnConfirmAssign="AssignTicketConfirmed" />
 
     <TicketEdit TicketToEdit="editingTicket"
                  OnClose="CloseModal"
@@ -38,9 +53,23 @@
 
 @code {
     private Ticket? editingTicket;
+    private Ticket? selectedTicketToAssign;
 
     [Parameter]
     public EventCallback<Ticket> OnTicketUpdated { get; set; }
+
+    [Parameter]
+    public EventCallback<Ticket> OnTicketDeleted { get; set; }
+
+    [Parameter]
+    public EventCallback<Ticket> OnTicketAssigned { get; set; }
+
+    private string? userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userName = await CurrentUserService.GetUserNameAsync();
+    }
 
     private void EditTicket(Ticket ticket)
     {
@@ -63,11 +92,24 @@
 
     private Ticket? selectedTicketToDelete;
     private bool showDeleteModal;
+    private bool showAssignModal;
 
     private void OpenDeleteModal(Ticket ticket)
     {
         selectedTicketToDelete = ticket;
         showDeleteModal = true;
+    }
+
+    private void OpenAssignModal(Ticket ticket)
+    {
+        selectedTicketToAssign = ticket;
+        showAssignModal = true;
+    }
+
+    private void CloseAssignModal()
+    {
+        selectedTicketToAssign = null;
+        showAssignModal = false;
     }
 
     private void CloseDeleteModal()
@@ -76,12 +118,30 @@
         showDeleteModal = false;
     }
 
+    private async Task AssignTicketConfirmed(Guid ticketId)
+    {
+        var assigned = await TicketService.GetByIdAsync(ticketId);
+        if (assigned == null)
+        {
+            return; // Ticket not found
+        }
+        assigned.AssignedTo = userName;
+        await TicketService.UpdateAsync(assigned);
+        CloseAssignModal();
+        StateHasChanged();
+        await OnTicketAssigned.InvokeAsync(assigned);
+    }
+
     private async Task DeleteTicketConfirmed(Guid ticketId)
     {
+        var deleted = await TicketService.GetByIdAsync(ticketId);
+
         await TicketService.DeleteAsync(ticketId);
 
         CloseDeleteModal();
         StateHasChanged();
+
+        await OnTicketDeleted.InvokeAsync(deleted);
     }
 
     private async Task SaveTicket(Ticket updated)

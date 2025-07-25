@@ -1,6 +1,7 @@
 using IssueTracker.Core.Components;
 using IssueTracker.Core.Models;
 using IssueTracker.Core.Services;
+using Microsoft.AspNetCore.Authentication.Negotiate;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,15 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddSingleton<MockDataStore>();
+
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+    .AddNegotiate();
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = options.DefaultPolicy;
+});
 
 var app = builder.Build();
 
@@ -24,6 +34,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 

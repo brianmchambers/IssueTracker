@@ -15,6 +15,9 @@ public partial class TicketList : ComponentBase
     [Parameter]
     public EventCallback<Ticket> OnTicketSelected { get; set; }
 
+    [Parameter]
+    public EventCallback<Ticket> OnTicketDeleted { get; set; }
+
     protected List<Ticket> Tickets { get; set; } = [];
 
     private Guid? SelectedTicketId;
@@ -28,6 +31,13 @@ public partial class TicketList : ComponentBase
         }
 
         SelectedTicketId = updated.Id;
+        StateHasChanged();
+    }
+
+    private void HandleTicketDeleted(Ticket deleted)
+    {
+        Tickets.RemoveAll(t => t.Id == deleted.Id);
+        SelectedTicketId = null;
         StateHasChanged();
     }
 

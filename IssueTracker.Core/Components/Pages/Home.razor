@@ -4,6 +4,7 @@
 @using IssueTracker.Core.Models
 @using IssueTracker.Core.Services
 @inject ProjectService ProjectService
+@inject ICurrentUserService CurrentUser
 
 <PageTitle>Issue Tracker</PageTitle>
 
@@ -46,10 +47,13 @@
     protected override async Task OnInitializedAsync()
     {
         Projects = await ProjectService.GetAllAsync();
+        userName = await CurrentUser.GetUserNameAsync();
     }
 
     private void HandleProjectSelected(Guid projectId)
     {
         SelectedProjectId = projectId;
     }
+
+    private string? userName;
 }

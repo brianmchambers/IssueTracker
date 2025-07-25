@@ -35,6 +35,6 @@ else
 
     @if (SelectedTicketId != null)
     {
-        <TicketDetail TicketId="SelectedTicketId.Value" OnTicketUpdated="HandleTicketUpdated" />
+        <TicketDetail TicketId="SelectedTicketId.Value" OnTicketUpdated="HandleTicketUpdated" OnTicketDeleted="HandleTicketDeleted" OnTicketAssigned="HandleTicketUpdated" />
     }
 }

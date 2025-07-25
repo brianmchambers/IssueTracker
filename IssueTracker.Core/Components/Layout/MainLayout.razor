@@ -1,4 +1,17 @@
 ﻿@inherits LayoutComponentBase
+@using IssueTracker.Core.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject ICurrentUserService CurrentUserService
+
+@code {
+    private string? userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userName = await CurrentUserService.GetUserNameAsync();
+    }
+}
 
 <div class="page">
     <div class="sidebar">
@@ -6,13 +19,22 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+        <div class="main">
+            <div class="top-bar d-flex justify-content-end align-items-center p-2">
+                <AuthorizeView>
+                    <Authorized>
+                        <span class="text-muted me-3">Welcome, @userName</span>
+                    </Authorized>
+                    <NotAuthorized>
+                        <span class="text-muted me-3">Not signed in</span>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
+            <article class="content px-4">
+                @Body
+            </article>
+        </div>
     </main>
 </div>
 
