@@ -19,8 +19,9 @@ namespace IssueTracker.Core.Services
 
         public async Task<string?> GetUserNameAsync()
         {
-            var user = await GetUserAsync();
-            return user.Identity?.Name?.Split('\\').Last();
+            return await Task.FromResult("Brian");
+            // var user = await GetUserAsync();
+            // return user.Identity?.Name?.Split('\\').Last();
         }
     }
 }

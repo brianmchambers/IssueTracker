@@ -15,12 +15,12 @@ builder.Services.AddSingleton<MockDataStore>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-    .AddNegotiate();
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+//builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+    //.AddNegotiate();
+//builder.Services.AddAuthorization(options =>
+//{
+    //options.FallbackPolicy = options.DefaultPolicy;
+//});
 
 var app = builder.Build();
 
@@ -34,8 +34,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.UseAntiforgery();
 
